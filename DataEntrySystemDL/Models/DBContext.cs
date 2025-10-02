@@ -10,17 +10,17 @@ namespace DataEntrySystemDL.Models
         }
 
         #region DB Set
-        public DbSet<data_rows_eav> data_Rows_Eavs { get; set; }
-        public DbSet<data_rows_json> data_Rows_Jsons { get; set; }
-        public DbSet<data_values_eav> data_Values_Eavs { get; set; }
-        public DbSet<field_permissions> field_Permissions { get; set; }
-        public DbSet<FieldDefinition> FieldDefinitions { get; set; }
+        public DbSet<data_rows_eav> data_rows_eavs { get; set; }
+        public DbSet<data_rows_json> data_rows_jsons { get; set; }
+        public DbSet<data_values_eav> data_values_eavs { get; set; }
+        public DbSet<field_permissions> field_permissions { get; set; }
+        public DbSet<FieldDefinition> fielddefinitions { get; set; }
         public DbSet<projects> projects { get; set; }
         public DbSet<roles> roles { get; set; }
-        public DbSet<row_access_rules> row_Access_Rules { get; set; }
+        public DbSet<row_access_rules> row_access_rules { get; set; }
         public DbSet<tables> tables { get; set; }
         public DbSet<users> users { get; set; }
-        public DbSet<user_roles> user_Roles { get; set; }
+        public DbSet<user_roles> user_roles { get; set; }
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

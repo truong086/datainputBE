@@ -19,8 +19,8 @@ namespace DataEntrySystemDL.Service
             {
                 var user = _userToken.name();
                 var checkUser = _context.users.FirstOrDefault(x => x.id == int.Parse(user) && !x.deleted);
-                var checkField = _context.FieldDefinitions.FirstOrDefault(x => x.id == data.field_id && !x.deleted);
-                var checkRow = _context.data_Rows_Eavs.FirstOrDefault(x => x.id == data.row_id && !x.deleted);
+                var checkField = _context.fielddefinitions.FirstOrDefault(x => x.id == data.field_id && !x.deleted);
+                var checkRow = _context.data_rows_eavs.FirstOrDefault(x => x.id == data.row_id && !x.deleted);
 
                 if (checkUser == null || checkField == null || checkRow == null) return await Task.FromResult(PayLoad<data_values_eavDTO>.CreatedFail(Status.DATANULL));
                 var newData = new data_values_eav();
@@ -39,7 +39,7 @@ namespace DataEntrySystemDL.Service
                 else if(checkField.fieldType == FieldType.Boolean)
                     newData.ValueBoolean = data.ValueBoolean;
 
-                _context.data_Values_Eavs.Add(newData);
+                _context.data_values_eavs.Add(newData);
                 _context.SaveChanges();
 
                 return await Task.FromResult(PayLoad<data_values_eavDTO>.Successfully(data));
@@ -70,8 +70,8 @@ namespace DataEntrySystemDL.Service
             try
             {
                 var user = _userToken.name();
-                var checkId = _context.data_Values_Eavs.FirstOrDefault(x => x.id == id && x.field_id == data.field_id && x.row_id == data.row_id && !x.deleted);
-                var checkField = _context.FieldDefinitions.FirstOrDefault(x => x.id == data.field_id && !x.deleted);
+                var checkId = _context.data_values_eavs.FirstOrDefault(x => x.id == id && x.field_id == data.field_id && x.row_id == data.row_id && !x.deleted);
+                var checkField = _context.fielddefinitions.FirstOrDefault(x => x.id == data.field_id && !x.deleted);
                 var checkUser = _context.users.FirstOrDefault(x => x.id == int.Parse(user) && !x.deleted);
 
                 if (checkId == null || checkField == null || checkUser == null)
@@ -88,7 +88,7 @@ namespace DataEntrySystemDL.Service
 
                 checkId.cretoredit = checkUser.username + " đã thay đổi bản ghi vào lúc " + DateTime.UtcNow;
 
-                _context.data_Values_Eavs.Update(checkId);
+                _context.data_values_eavs.Update(checkId);
                 _context.SaveChanges();
 
                 return await Task.FromResult(PayLoad<data_values_eavDTO>.Successfully(data));

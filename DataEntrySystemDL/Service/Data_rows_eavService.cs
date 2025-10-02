@@ -31,7 +31,7 @@ namespace DataEntrySystemDL.Service
                     users = checkUser
                 };
 
-                _context.data_Rows_Eavs.Add(dataNew);
+                _context.data_rows_eavs.Add(dataNew);
                 _context.SaveChanges();
 
                 return await Task.FromResult(PayLoad<data_rows_eavDTO>.Successfully(data));
@@ -46,7 +46,7 @@ namespace DataEntrySystemDL.Service
             try
             {
                 var user = _userToken.name();
-                var checkId = _context.data_Rows_Eavs.FirstOrDefault(x => x.id == id && !x.deleted);
+                var checkId = _context.data_rows_eavs.FirstOrDefault(x => x.id == id && !x.deleted);
                 var checkUser = _context.users.FirstOrDefault(x => x.id == Convert.ToInt32(id) && !x.deleted);
 
                 if (checkId == null || checkUser == null) return await Task.FromResult(PayLoad<string>.CreatedFail(Status.DATANULL));
@@ -54,7 +54,7 @@ namespace DataEntrySystemDL.Service
                 checkId.deleted = true;
                 checkId.cretoredit = checkUser.username + " đã xóa và lúc " + DateTime.Now;
 
-                _context.data_Rows_Eavs.Update(checkId);
+                _context.data_rows_eavs.Update(checkId);
                 _context.SaveChanges();
 
                 return await Task.FromResult(PayLoad<string>.Successfully(Status.SUCCESS));

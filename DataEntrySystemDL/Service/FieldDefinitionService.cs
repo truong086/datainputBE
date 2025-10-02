@@ -21,7 +21,7 @@ namespace DataEntrySystemDL.Service
         {
             try
             {
-                var checkName = _context.FieldDefinitions.FirstOrDefault(x => x.field_name == data.field_name && x.table_id == data.table_id && !x.deleted);
+                var checkName = _context.fielddefinitions.FirstOrDefault(x => x.field_name == data.field_name && x.table_id == data.table_id && !x.deleted);
                 if (checkName != null) return await Task.FromResult(PayLoad<FieldDefinitionDTO>.CreatedFail(Status.DATATONTAI));
 
                 var checkTable = _context.tables.FirstOrDefault(x => x.id == data.table_id && !x.deleted);
@@ -32,7 +32,7 @@ namespace DataEntrySystemDL.Service
                 {
                     
                     //var idlast = _context.FieldDefinitions.OrderBy(x => x.id).LastOrDefault();
-                    var idlast = _context.FieldDefinitions.Any() ?  _context.FieldDefinitions.Max(x => x.id) : 0; // Dùng "Max()" để lấy ra id lớn nhất
+                    var idlast = _context.fielddefinitions.Any() ?  _context.fielddefinitions.Max(x => x.id) : 0; // Dùng "Max()" để lấy ra id lớn nhất
                     int nextId = idlast + 1;
                     mapData.fieldType = typeData;
                     mapData.field_key = RanDomCode.geneAction(8) + "_" + nextId.ToString();
@@ -41,10 +41,10 @@ namespace DataEntrySystemDL.Service
                     mapData.table = checkTable;
                     mapData.table_id = checkTable.id;
 
-                    _context.FieldDefinitions.Add(mapData);
+                    _context.fielddefinitions.Add(mapData);
                     if(_context.SaveChanges() > 0)
                     {
-                        var dataNew = _context.FieldDefinitions.OrderByDescending(x => x.created_at).FirstOrDefault();
+                        var dataNew = _context.fielddefinitions.OrderByDescending(x => x.created_at).FirstOrDefault();
 
                         if(data.listRoles != null && data.listRoles.Count > 0) 
                         {
@@ -67,7 +67,7 @@ namespace DataEntrySystemDL.Service
                                 list.Add(dataRole);
                             }
 
-                            _context.field_Permissions.AddRange(list);
+                            _context.field_permissions.AddRange(list);
                             _context.SaveChanges();
                         }
                     }
@@ -100,7 +100,7 @@ namespace DataEntrySystemDL.Service
 
                 if (checkId == null || checkUser == null) return await Task.FromResult(PayLoad<object>.CreatedFail(Status.DATANULL));
 
-                var checkRole = _context.row_Access_Rules.Select(x => new
+                var checkRole = _context.row_access_rules.Select(x => new
                 {
                     x.table_id,
                     x.user_id,
@@ -137,15 +137,15 @@ namespace DataEntrySystemDL.Service
         {
             try
             {
-                var checkId = _context.FieldDefinitions.FirstOrDefault(x => x.id == id && !x.deleted);
+                var checkId = _context.fielddefinitions.FirstOrDefault(x => x.id == id && !x.deleted);
                 if (checkId == null) return await Task.FromResult(PayLoad<FieldDefinitionDTO>.CreatedFail(Status.DATANULL));
 
-                var checkName = _context.FieldDefinitions.FirstOrDefault(x => x.field_name == data.field_name && !x.deleted && x.id != checkId.id);
+                var checkName = _context.fielddefinitions.FirstOrDefault(x => x.field_name == data.field_name && !x.deleted && x.id != checkId.id);
                 if (checkName != null) return await Task.FromResult(PayLoad<FieldDefinitionDTO>.CreatedFail(Status.DATATONTAI));
 
                 checkId.field_name = data.field_name;
 
-                _context.FieldDefinitions.Update(checkId);
+                _context.fielddefinitions.Update(checkId);
                 _context.SaveChanges();
 
                 return await Task.FromResult(PayLoad<FieldDefinitionDTO>.Successfully(data));
@@ -170,7 +170,7 @@ namespace DataEntrySystemDL.Service
                     || checkUser == null) 
                     return await Task.FromResult(PayLoad<row_access_rulesDTO>.CreatedFail(Status.DATANULL));
 
-                var checkRoleUser = _context.user_Roles.FirstOrDefault(x => x.user_id == checkUser.id && !x.deleted);
+                var checkRoleUser = _context.user_roles.FirstOrDefault(x => x.user_id == checkUser.id && !x.deleted);
                 if(checkRoleUser == null) return await Task.FromResult(PayLoad<row_access_rulesDTO>.CreatedFail(Status.DATANULL));
 
                 var checkRole = _context.roles.FirstOrDefault(x => x.id == checkRoleUser.role_id && !x.deleted);
@@ -189,7 +189,7 @@ namespace DataEntrySystemDL.Service
                         table = checkTable
                     };
 
-                    _context.row_Access_Rules.Add(dataNew);
+                    _context.row_access_rules.Add(dataNew);
                     _context.SaveChanges();
                 }
                 else
@@ -208,10 +208,10 @@ namespace DataEntrySystemDL.Service
         {
             try
             {
-                var checkRole = _context.field_Permissions.FirstOrDefault(x => x.field_id == data.id_field && x.role_id == data.id_role && !x.deleted);
+                var checkRole = _context.field_permissions.FirstOrDefault(x => x.field_id == data.id_field && x.role_id == data.id_role && !x.deleted);
                 if (checkRole != null) return await Task.FromResult(PayLoad<RolePermissionsDTO>.CreatedFail(Status.DATATONTAI));
 
-                var checkField = _context.FieldDefinitions.FirstOrDefault(x => x.id == data.id_field && !x.deleted);
+                var checkField = _context.fielddefinitions.FirstOrDefault(x => x.id == data.id_field && !x.deleted);
                 var checkRoleId = _context.roles.FirstOrDefault(x => x.id == data.id_role && !x.deleted);
 
                 if(checkField == null || checkRoleId == null) return await Task.FromResult(PayLoad<RolePermissionsDTO>.CreatedFail(Status.DATANULL));
@@ -226,7 +226,7 @@ namespace DataEntrySystemDL.Service
                     field_id = data.id_field
                 };
 
-                _context.field_Permissions.Add(dataNew);
+                _context.field_permissions.Add(dataNew);
                 _context.SaveChanges();
 
                 return await Task.FromResult(PayLoad<RolePermissionsDTO>.Successfully(data));

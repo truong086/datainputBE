@@ -74,3 +74,4 @@ C:\Users\ASUS\source\repos\DataEntrySystemDL\DataEntrySystemDL\obj\Debug\net6.0\
 C:\Users\ASUS\source\repos\DataEntrySystemDL\DataEntrySystemDL\obj\Debug\net6.0\DataEntrySystemDL.pdb
 C:\Users\ASUS\source\repos\DataEntrySystemDL\DataEntrySystemDL\obj\Debug\net6.0\DataEntrySystemDL.genruntimeconfig.cache
 C:\Users\ASUS\source\repos\DataEntrySystemDL\DataEntrySystemDL\obj\Debug\net6.0\ref\DataEntrySystemDL.dll
+C:\Users\ASUS\source\repos\DataEntrySystemDL\DataEntrySystemDL\obj\Debug\net6.0\DataEntrySystemDL.sourcelink.json

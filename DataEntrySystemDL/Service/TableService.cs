@@ -54,7 +54,7 @@ namespace DataEntrySystemDL.Service
                 _context.SaveChanges();
 
                 var dataNew = _context.tables.OrderByDescending(x => x.id).FirstOrDefault();
-                var checkRole = _context.user_Roles.FirstOrDefault(x => x.user_id == checkUser.id && !x.deleted);
+                var checkRole = _context.user_roles.FirstOrDefault(x => x.user_id == checkUser.id && !x.deleted);
                 var checkRoleData = _context.roles.FirstOrDefault(x => x.id == checkRole.role_id && !x.deleted);
                 var roleNewTable = new row_access_rules
                 {
@@ -67,7 +67,7 @@ namespace DataEntrySystemDL.Service
                     access_type = Enum.Parse<access_types>("write")
                 };
 
-                _context.row_Access_Rules.Add(roleNewTable);
+                _context.row_access_rules.Add(roleNewTable);
                 _context.SaveChanges();
 
                 return await Task.FromResult(PayLoad<tableDTO>.Successfully(data));
@@ -509,7 +509,7 @@ namespace DataEntrySystemDL.Service
                 };
                 Add(dataTableDTO);
                 var dataNewTable = _context.tables.OrderByDescending(x => x.id).FirstOrDefault();
-                var checkRole = _context.user_Roles.FirstOrDefault(x => x.user_id == checkUser.id && !x.deleted);
+                var checkRole = _context.user_roles.FirstOrDefault(x => x.user_id == checkUser.id && !x.deleted);
 
                 var rowAccess = new row_access_rulesDTO
                 {
@@ -558,7 +558,7 @@ namespace DataEntrySystemDL.Service
                                     table_id = dataNewTable.id
                                 };
                                 _fieldDefinitionService.Add(newFieldDTO);
-                                var dataNewField = _context.FieldDefinitions.OrderByDescending(x => x.id).FirstOrDefault();
+                                var dataNewField = _context.fielddefinitions.OrderByDescending(x => x.id).FirstOrDefault();
                                 for (int row = 2; row <= rowCount; row++)
                                 {
                                     var cellValue = worksheet.Cells[row, col].Value?.ToString();
@@ -569,7 +569,7 @@ namespace DataEntrySystemDL.Service
                                             table_id = dataNewTable.id
                                         });
 
-                                        var newRow = _context.data_Rows_Eavs.OrderByDescending(x => x.id).FirstOrDefault();
+                                        var newRow = _context.data_rows_eavs.OrderByDescending(x => x.id).FirstOrDefault();
                                         listRow.Add(newRow.id);
 
                                         if (!string.IsNullOrEmpty(cellValue))

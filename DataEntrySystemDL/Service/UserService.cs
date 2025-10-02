@@ -51,7 +51,7 @@ namespace DataEntrySystemDL.Service
                         role_id = roleName.id
                     };
 
-                    _context.user_Roles.Add(dataUserRole);
+                    _context.user_roles.Add(dataUserRole);
                     _context.SaveChanges();
                 }
 
