@@ -1,6 +1,7 @@
 ﻿using DataEntrySystemDL.Common;
 using DataEntrySystemDL.Models;
 using DataEntrySystemDL.ViewModel;
+using System.Text.Json;
 
 namespace DataEntrySystemDL.Service
 {
@@ -30,15 +31,45 @@ namespace DataEntrySystemDL.Service
                 newData.field_id = data.field_id;
                 newData.field_key = checkField.field_key;
 
-                if (checkField.fieldType == FieldType.Text)
-                    newData.value_text = data.value_text;
-                else if(checkField.fieldType == FieldType.Date || checkField.fieldType == FieldType.DateTime)
-                    newData.value_date = data.value_date;
-                else if(checkField.fieldType == FieldType.Number)
-                    newData.value_number = data.value_number;
-                else if(checkField.fieldType == FieldType.Boolean)
-                    newData.ValueBoolean = data.ValueBoolean;
+                //if (checkField.fieldType == FieldType.Text)
+                //    newData.value_text = data.value_text;
+                //else if (checkField.fieldType == FieldType.Date || checkField.fieldType == FieldType.DateTime)
+                //    newData.value_date = data.value_date;
+                //else if (checkField.fieldType == FieldType.Number)
+                //    newData.value_number = data.value_number;
+                //else if (checkField.fieldType == FieldType.Boolean)
+                //    newData.ValueBoolean = data.ValueBoolean;
 
+                if (data.data is JsonElement element)
+                {
+                    if (checkField.fieldType == FieldType.Text)
+                        newData.value_text = element.GetString();
+                    else if (checkField.fieldType == FieldType.Date || checkField.fieldType == FieldType.DateTime)
+                    {
+                        if(element.ValueKind == JsonValueKind.String && DateTime.TryParse(element.GetString(), out var dt))
+                        {
+                            newData.value_date = dt;
+                        }else newData.value_date = null;
+
+                    }
+                        
+                    else if (checkField.fieldType == FieldType.Number)
+                    {
+                        if (element.ValueKind == JsonValueKind.Number)
+                            newData.value_number = element.GetDecimal();
+                        else if (decimal.TryParse(element.GetString(), out var num))
+                            newData.value_number = num;
+                    }
+                        
+                    else if (checkField.fieldType == FieldType.Boolean)
+                    {
+                        if(element.ValueKind == JsonValueKind.True || element.ValueKind == JsonValueKind.False)
+                            newData.ValueBoolean = element.GetBoolean();
+                        else if(bool.TryParse(element.GetString(), out var b)) 
+                            newData.ValueBoolean = b;
+                    }
+                        
+                }
                 _context.data_values_eavs.Add(newData);
                 _context.SaveChanges();
 
@@ -77,15 +108,42 @@ namespace DataEntrySystemDL.Service
                 if (checkId == null || checkField == null || checkUser == null)
                     return await Task.FromResult(PayLoad<data_values_eavDTO>.CreatedFail(Status.DATANULL));
 
-                if (checkField.fieldType == FieldType.Text)
-                    checkId.value_text = data.value_text;
-                else if (checkField.fieldType == FieldType.Date || checkField.fieldType == FieldType.DateTime)
-                    checkId.value_date = data.value_date;
-                else if (checkField.fieldType == FieldType.Number)
-                    checkId.value_number = data.value_number;
-                else if (checkField.fieldType == FieldType.Boolean)
-                    checkId.ValueBoolean = data.ValueBoolean;
+                //if (checkField.fieldType == FieldType.Text)
+                //    checkId.value_text = data.value_text;
+                //else if (checkField.fieldType == FieldType.Date || checkField.fieldType == FieldType.DateTime)
+                //    checkId.value_date = data.value_date;
+                //else if (checkField.fieldType == FieldType.Number)
+                //    checkId.value_number = data.value_number;
+                //else if (checkField.fieldType == FieldType.Boolean)
+                //    checkId.ValueBoolean = data.ValueBoolean;
 
+                if(data.data is JsonElement element)
+                {
+                    if (checkField.fieldType == FieldType.Text)
+                        checkId.value_text = element.GetString();
+                    else if (checkField.fieldType == FieldType.Date || checkField.fieldType == FieldType.DateTime)
+                    {
+                        if (element.ValueKind == JsonValueKind.String && DateTime.TryParse(element.GetString(), out var dt))
+                            checkId.value_date = dt;
+                         else checkId.value_date = null;
+                        
+                    }
+                    else if (checkField.fieldType == FieldType.Number)
+                    {
+                        if(element.ValueKind == JsonValueKind.Number)
+                            checkId.value_number = element.GetDecimal();
+                        else if(decimal.TryParse(element.GetString(), out var num)) 
+                            checkId.value_number = num;
+                    }
+                        
+                    else if (checkField.fieldType == FieldType.Boolean)
+                    {
+                        if (element.ValueKind == JsonValueKind.True || element.ValueKind == JsonValueKind.False)
+                            checkId.ValueBoolean = element.GetBoolean();
+                        else if (bool.TryParse(element.GetString(), out var b))
+                            checkId.ValueBoolean = b;
+                    }
+                }
                 checkId.cretoredit = checkUser.username + " đã thay đổi bản ghi vào lúc " + DateTime.UtcNow;
 
                 _context.data_values_eavs.Update(checkId);

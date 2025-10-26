@@ -34,6 +34,13 @@ namespace DataEntrySystemDL.Controllers
         }
 
         [HttpGet]
+        [Route(nameof(FindAllFieldByTable))]
+        public async Task<PayLoad<object>> FindAllFieldByTable(int id)
+        {
+            return await _service.FindAllFieldBtTable(id);
+        }
+
+        [HttpGet]
         [Route(nameof(FindOneTable))]
         public async Task<PayLoad<object>> FindOneTable(int id, int page = 1, int pageSize = 20)
         {

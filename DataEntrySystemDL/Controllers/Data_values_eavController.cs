@@ -1,11 +1,14 @@
 ﻿using DataEntrySystemDL.Common;
 using DataEntrySystemDL.Service;
 using DataEntrySystemDL.ViewModel;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DataEntrySystemDL.Controllers
 {
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [ApiController]
     public class Data_values_eavController : ControllerBase

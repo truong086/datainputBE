@@ -5,6 +5,7 @@
         public int? row_id { get; set; }
         public int? field_id { get; set; }
         public string? field_key { get; set; }
+        public object? data { get; set; }
         public string? value_text { get; set; }
         public decimal? value_number { get; set; }
         public DateTime? value_date { get; set; }

@@ -14,5 +14,6 @@ namespace DataEntrySystemDL.Service
         Task<PayLoad<string>> Delete (int id);
         byte[] ExcelExPost (int id);
         Task<PayLoad<ImportTable>> importData(ImportTable data);
+        Task<PayLoad<object>> FindAllFieldBtTable(int id);
     }
 }

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DataEntrySystemDL")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+95ab868043c252e4ddf71b76b946d81aaffb21a6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4b52fa2528bc9d9637c2ee5a2ecbe23248f90c67")]
 [assembly: System.Reflection.AssemblyProductAttribute("DataEntrySystemDL")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DataEntrySystemDL")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

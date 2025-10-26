@@ -209,7 +209,25 @@ namespace DataEntrySystemDL.Service
             try
             {
                 var checkRole = _context.field_permissions.FirstOrDefault(x => x.field_id == data.id_field && x.role_id == data.id_role && !x.deleted);
-                if (checkRole != null) return await Task.FromResult(PayLoad<RolePermissionsDTO>.CreatedFail(Status.DATATONTAI));
+                if (checkRole != null)
+                {
+                    if (data.can_write == null)
+                        checkRole.can_write = false;
+                    else if(data.can_write != null)
+                        checkRole.can_write = data.can_write.Value;
+                    if (data.can_read == null)
+                        checkRole.can_read = false;
+                    else if(data.can_read != null)
+                        checkRole.can_read = data.can_read.Value;
+
+                    _context.field_permissions.Update(checkRole);
+                    _context.SaveChanges();
+
+                    return await Task.FromResult(PayLoad<RolePermissionsDTO>.Successfully(data));
+                }
+
+                if(checkRole == null && data.can_write == null && data.can_read == null)
+                    return await Task.FromResult(PayLoad<RolePermissionsDTO>.CreatedFail(Status.DATANULL));
 
                 var checkField = _context.fielddefinitions.FirstOrDefault(x => x.id == data.id_field && !x.deleted);
                 var checkRoleId = _context.roles.FirstOrDefault(x => x.id == data.id_role && !x.deleted);
@@ -218,8 +236,8 @@ namespace DataEntrySystemDL.Service
 
                 var dataNew = new field_permissions
                 {
-                    can_write = data.can_write,
-                    can_read = data.can_read,
+                    can_write = data.can_write.Value,
+                    can_read = data.can_read.Value,
                     role = checkRoleId,
                     role_id = data.id_role,
                     fieldDefinition = checkField,

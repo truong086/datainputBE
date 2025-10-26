@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using System.Drawing.Printing;
+using System.Text.Json;
 
 namespace DataEntrySystemDL.Service
 {
@@ -320,6 +321,7 @@ namespace DataEntrySystemDL.Service
                                 x5.row_uuid,
                                 field_row = x5.Data_Values_Eavs.Where(x7 => x7.row_id == x5.id && x7.field_id == x1.id).Select(x8 => new
                                 {
+                                    x8.id,
                                     x8.row_id,
                                     x8.field_id,
                                     x8.field_key,
@@ -327,7 +329,8 @@ namespace DataEntrySystemDL.Service
                                     x8.value_number,
                                     x8.value_date,
                                     x8.value_datetime,
-                                    x8.ValueBoolean
+                                    x8.ValueBoolean,
+                                    field_name = x8.field_definition.field_name
                                 }).FirstOrDefault()
                             }).ToList()
                         }).ToList(),
@@ -345,7 +348,8 @@ namespace DataEntrySystemDL.Service
                                 x4.value_number,
                                 x4.value_date,
                                 x4.value_datetime,
-                                x4.ValueBoolean
+                                x4.ValueBoolean,
+                                field_name = x4.field_definition.field_name
                             }).ToList()
                         }).ToList()
                     }).ToList();
@@ -561,7 +565,28 @@ namespace DataEntrySystemDL.Service
                                 var dataNewField = _context.fielddefinitions.OrderByDescending(x => x.id).FirstOrDefault();
                                 for (int row = 2; row <= rowCount; row++)
                                 {
-                                    var cellValue = worksheet.Cells[row, col].Value?.ToString();
+                                    var cell = worksheet.Cells[row, col];
+                                    //var cellValue = worksheet.Cells[row, col].Value?.ToString();
+                                    var cellValue = worksheet.Cells[row, col].Value;
+                                    var cellCheck = cell.Value;
+                                    JsonElement? jsonelement = null;
+                                    if (cell.Style.Numberformat.Format.Contains("yy") || cell.Style.Numberformat.Format.Contains("dd"))
+                                    {
+                                        if (cellCheck is double d)
+                                        {
+                                            cellValue = FromExcelSerialDate(d);
+                                            jsonelement = JsonSerializer.Deserialize<JsonElement>(JsonSerializer.Serialize(cellValue));
+                                        }
+                                        else if (DateTime.TryParse(cellValue?.ToString(), out var dt))
+                                        {
+                                            cellValue = dt;
+                                            jsonelement = JsonSerializer.Deserialize<JsonElement>(JsonSerializer.Serialize(cellValue));
+                                        }
+                                    }
+                                    else
+                                    {
+                                        jsonelement = JsonSerializer.Deserialize<JsonElement>(JsonSerializer.Serialize(cellValue?.ToString()));
+                                    }
                                     if (checkRow == 0)
                                     {
                                         _Rows_EavService.Add(new data_rows_eavDTO
@@ -572,7 +597,7 @@ namespace DataEntrySystemDL.Service
                                         var newRow = _context.data_rows_eavs.OrderByDescending(x => x.id).FirstOrDefault();
                                         listRow.Add(newRow.id);
 
-                                        if (!string.IsNullOrEmpty(cellValue))
+                                        if (!string.IsNullOrEmpty(cellValue?.ToString()))
                                         {
                                             _Values_EavService.Add(new data_values_eavDTO
                                             {
@@ -583,7 +608,8 @@ namespace DataEntrySystemDL.Service
                                                 value_date = null,
                                                 value_datetime = null,
                                                 value_number = null,
-                                                value_text = cellValue
+                                                value_text = cellValue?.ToString(),
+                                                data = jsonelement
                                             });
                                         }
                                     }else if(checkRow == 1)
@@ -593,7 +619,7 @@ namespace DataEntrySystemDL.Service
                                         //listRow.Sort();
                                         var indexArr = sortInt[row - 2];
 
-                                        if (!string.IsNullOrEmpty(cellValue))
+                                        if (!string.IsNullOrEmpty(cellValue?.ToString()))
                                         {
                                             _Values_EavService.Add(new data_values_eavDTO
                                             {
@@ -604,7 +630,8 @@ namespace DataEntrySystemDL.Service
                                                 value_date = null,
                                                 value_datetime = null,
                                                 value_number = null,
-                                                value_text = cellValue
+                                                value_text = cellValue?.ToString(),
+                                                data = jsonelement
                                             });
                                         }
                                     }
@@ -623,6 +650,33 @@ namespace DataEntrySystemDL.Service
             }catch(Exception ex)
             {
                 return await Task.FromResult(PayLoad<ImportTable>.CreatedFail(ex.Message));
+            }
+        }
+
+        public static DateTime FromExcelSerialDate(double serialDate)
+        {
+            // Excel bắt đầu từ ngày 1900-01-01
+            DateTime startDate = new DateTime(1899, 12, 30); // Excel đếm sai 2 ngày, phải trừ bù
+            return startDate.AddDays(serialDate);
+        }
+
+        public async Task<PayLoad<object>> FindAllFieldBtTable(int id)
+        {
+            try
+            {
+                var data = _context.fielddefinitions.Where(x => x.table_id == id && !x.deleted).Select(x => new
+                {
+                    x.id,
+                    x.field_name
+                }).ToList();
+
+                return await Task.FromResult(PayLoad<object>.Successfully(new
+                {
+                    data = data
+                }));
+            }catch(Exception ex)
+            {
+                return await Task.FromResult(PayLoad<object>.CreatedFail(ex.Message));
             }
         }
     }
